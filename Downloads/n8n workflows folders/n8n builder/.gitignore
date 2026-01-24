@@ -1,0 +1,12 @@
+# MCP configuration with API keys - DO NOT COMMIT
+.mcp.json
+
+# Cloned skill repos
+n8n-skills/
+
+# Node modules
+node_modules/
+
+# Environment files
+.env
+.env.local
