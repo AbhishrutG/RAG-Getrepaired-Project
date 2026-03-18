@@ -43,6 +43,7 @@ st.markdown("""
         padding: 12px;
         font-size: 15px;
         background-color: white;
+        color: #111111 !important;
     }
     .stTextInput > div > div > input:focus {
         border-color: #3DB84B;
