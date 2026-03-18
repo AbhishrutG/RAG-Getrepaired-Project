@@ -78,6 +78,33 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+# ── Auto Ingest on startup ──────────────────────────────────────────────────────
+@st.cache_resource  # runs only once per session
+def run_ingest():
+    import os
+    from dotenv import load_dotenv
+    from sentence_transformers import SentenceTransformer
+    import chromadb
+
+    load_dotenv()
+    model = SentenceTransformer('all-MiniLM-L6-v2')
+    client = chromadb.PersistentClient(path="./chroma_db")
+    collection = client.get_or_create_collection(name="getrepaired")
+
+    with open("data/getrepaired_faq.txt", "r") as f:
+        text = f.read()
+
+    chunks = [c.strip() for c in text.split("\n\n") if c.strip()]
+    embeddings = model.encode(chunks).tolist()
+    collection.upsert(
+        documents=chunks,
+        embeddings=embeddings,
+        ids=[f"chunk_{i}" for i in range(len(chunks))]
+    )
+    return True
+
+run_ingest()  # always runs on startup — safe because upsert handles duplicates
+
 # ── Load RAG ───────────────────────────────────────────────────────────────────
 @st.cache_resource  # load model only once
 def load_rag():
