@@ -1,0 +1,71 @@
+What is Get Repaired?
+Get Repaired is a repair marketplace that connects customers with trusted local repair shops for mobile phones, laptops, and other devices. We are not a repair shop ourselves — we are a platform that finds you the best repair option based on price, quality, and location. Think of us like Uber, but for device repairs.
+
+How does Get Repaired work?
+You select your device model and describe the issue on our platform. We then match you with verified local repair shops that can fix your specific problem. You receive quotes from multiple shops, compare them, and choose the one that suits you best. Once the repair is done, you can leave a review to help other customers.
+
+How are repair shops verified?
+Every shop on Get Repaired goes through a vetting process before being listed. We verify their business registration, check their past customer reviews, assess their technical capabilities, and conduct quality audits. Only shops that meet our standards are allowed on the platform. We continuously monitor shop performance through customer feedback.
+
+How is pricing decided?
+Each repair shop sets their own pricing independently. Get Repaired does not fix or control prices. You will receive transparent quotes from multiple shops so you can compare and make an informed decision. There are no hidden charges — the quote you see is what you pay.
+
+What happens if my repair goes wrong?
+If you are not satisfied with a repair, you can raise a dispute through our platform. Get Repaired will mediate between you and the shop to resolve the issue. Verified shops are required to offer a minimum warranty period on their repairs. In cases of negligence, we will take action against the shop including suspension from the platform.
+
+Which cities does Get Repaired operate in?
+Get Repaired currently operates in major cities across India including Mumbai, Pune, Delhi, Bangalore, Hyderabad, and Chennai. We are expanding to more cities regularly. You can check availability for your city directly on our platform by entering your location.
+
+How do I track my repair?
+Once your device is with a repair shop, you will receive status updates through our platform. The shop will update the repair status at each stage — received, diagnosed, in repair, and ready for pickup. You can view the live status anytime by logging into your Get Repaired account.
+
+How do I contact support?
+You can reach our support team through the Help section on our website or app. We are available via live chat, email, and WhatsApp. Our support hours are Monday to Saturday, 9am to 7pm IST. For urgent issues, WhatsApp is the fastest way to reach us.
+
+How long does a repair take?
+Repair time depends on the type of issue and the shop's availability. Most common repairs like screen replacements or battery changes are completed within the same day or 24 hours. Complex repairs may take 2-3 business days. The shop will give you an estimated time when you confirm the booking.
+
+Is my data safe when I give my phone for repair?
+Get Repaired strongly recommends backing up your data before handing over your device. While our verified shops are trained to handle devices professionally, Get Repaired is not liable for any data loss during repair. Always back up your phone before any repair service.
+
+How does Get Repaired rank and recommend shops?
+Our ranking algorithm considers multiple factors including overall customer rating, number of completed repairs, response time, dispute rate, and pricing competitiveness. Shops with consistently high ratings and low dispute rates appear higher in recommendations. We do not allow shops to pay for better rankings — the algorithm is purely performance-based.
+
+Can I cancel a repair booking after confirming?
+You can cancel a booking before the shop has started working on your device. Once the repair has been initiated, cancellation may attract a diagnostic fee charged by the shop. To cancel, go to your active bookings in your account and select the cancel option. Refunds for prepaid bookings are processed within 5-7 business days.
+
+What types of devices does Get Repaired support?
+Get Repaired currently supports mobile phones, tablets, laptops, and smartwatches. Within mobile phones, we cover all major brands including Apple, Samsung, OnePlus, Xiaomi, Realme, Vivo, and OPPO. Support for more device categories is being added based on demand in each city.
+
+How does the warranty on repairs work?
+Each verified shop on Get Repaired is required to provide a minimum 30-day warranty on parts and labour. Some shops offer up to 90 days depending on the repair type. If the same issue reoccurs within the warranty period, the shop must fix it at no additional cost. Warranty claims can be raised directly through our platform.
+
+What if the shop gives a higher bill than the original quote?
+The quote you receive is binding. Shops are not allowed to charge more than the quoted amount without your explicit approval. If the shop discovers additional damage during repair, they must inform you and get your consent before proceeding. Any unauthorized overcharging can be reported through our dispute system and will result in strict action against the shop.
+
+How does Get Repaired make money?
+Get Repaired charges a small commission to repair shops on each successfully completed repair. This commission is factored into the shop's pricing and is not an additional charge to the customer. Customers always pay the quoted amount — no platform fees on top.
+
+Can repair shops join Get Repaired?
+Yes, repair shops can apply to join the platform through our Partner Registration section on the website. The application goes through our vetting process which typically takes 5-7 business days. Shops must provide valid business registration, proof of technical expertise, and agree to our quality and pricing transparency standards.
+
+What is the Get Repaired satisfaction guarantee?
+If you are genuinely unsatisfied with a completed repair and the shop is unable to resolve the issue, Get Repaired will step in to mediate. In verified cases of poor workmanship, we may offer partial or full refunds depending on the situation. Our goal is that no customer leaves the platform with an unresolved complaint.
+
+How do I leave a review for a repair shop?
+After your repair is marked as completed, you will receive a notification prompting you to leave a review. You can rate the shop on parameters like quality of repair, communication, turnaround time, and overall experience. Reviews are verified — only customers who actually booked through the platform can leave a review, ensuring authenticity.
+
+Does Get Repaired offer doorstep repair services?
+Some shops on our platform offer doorstep or pickup-and-drop repair services. This option is visible on the shop's profile when available. Doorstep availability depends on your location and the shop's capacity. You can filter for shops offering this service when browsing repair options.
+
+What happens if a shop closes down after I book a repair?
+In rare cases where a shop becomes unavailable after a booking, Get Repaired will immediately reassign your repair to another verified shop at the same or better price. We will notify you as soon as possible and ensure continuity of service. Any prepaid amount will be honoured with the new shop.
+
+How does Get Repaired handle spare parts quality?
+Our verified shops are required to use genuine or certified OEM-equivalent parts for all repairs. Use of substandard or counterfeit parts is a violation of our partner agreement and grounds for removal from the platform. If you suspect low-quality parts were used, you can raise a quality dispute and we will investigate.
+
+Is there a loyalty or rewards program?
+Get Repaired is developing a loyalty program where frequent customers earn points on every completed repair. These points can be redeemed for discounts on future repairs. The program is currently in beta in select cities and will roll out nationwide soon. Stay tuned through our app notifications for updates.
+
+How secure is my payment on Get Repaired?
+All payments made through Get Repaired are processed through PCI-DSS compliant payment gateways. We support UPI, net banking, credit/debit cards, and wallets. We do not store your full card details on our servers. For added security, all transactions go through two-factor authentication.
