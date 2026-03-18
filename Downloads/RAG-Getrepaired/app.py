@@ -91,7 +91,9 @@ def run_ingest():
     client = chromadb.PersistentClient(path="./chroma_db")
     collection = client.get_or_create_collection(name="getrepaired")
 
-    with open("data/getrepaired_faq.txt", "r") as f:
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    faq_path = os.path.join(base_dir, "data", "getrepaired_faq.txt")
+    with open(faq_path, "r") as f:
         text = f.read()
 
     chunks = [c.strip() for c in text.split("\n\n") if c.strip()]
