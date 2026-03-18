@@ -2,7 +2,7 @@ import streamlit as st  # ui framework
 
 st.set_page_config(
     page_title="Get Repaired AI Assistant",
-    page_icon="🔧",
+    page_icon="https://raw.githubusercontent.com/AbhishrutG/RAG-Getrepaired-Project/main/data/logo.jpeg",
     layout="centered"
 )
 
