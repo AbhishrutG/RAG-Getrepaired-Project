@@ -44,6 +44,7 @@ st.markdown("""
         font-size: 15px;
         background-color: white;
         color: #111111 !important;
+        caret-color: #1560BD !important;
     }
     .stTextInput > div > div > input:focus {
         border-color: #3DB84B;
