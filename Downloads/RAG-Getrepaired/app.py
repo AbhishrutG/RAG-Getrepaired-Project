@@ -118,7 +118,9 @@ query_rag = load_rag()
 # ── Header ─────────────────────────────────────────────────────────────────────
 col1, col2 = st.columns([1, 4])
 with col1:
-    st.image("data/logo.jpeg", width=90)
+    import os
+    logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "logo.jpeg")
+    st.image(logo_path, width=90)
 with col2:
     st.markdown("""
     <div style="padding-top: 10px;">
