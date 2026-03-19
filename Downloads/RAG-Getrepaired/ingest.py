@@ -1,40 +1,77 @@
 import os
-## Lets Python talk to your operating system — reading files, accessing environment variables.
-
 from dotenv import load_dotenv
-## Your API key is sitting in .env. This line gives Python the ability to read that file and load the key into memory. 
-## Without this, Python has no idea your .env exists.
-
 from sentence_transformers import SentenceTransformer
-## This is the tool that converts text into vectors (numbers). 
-## When you write "how are shops verified?" — this converts that sentence into something like [0.23, -0.87, 0.45, ...] 
-## — 384 numbers that represent the meaning of that sentence.
-
 import chromadb
-## This is your vector database. Think of it like a special Excel sheet that stores those 384 numbers per chunk 
-## — and can instantly find which rows are most similar to a new question.
 
-load_dotenv()  ## load .env file in the memory
+load_dotenv()
 
-model = SentenceTransformer('all-MiniLM-L6-v2') ## load the embedding model
+# ── Step 1: Smart Chunking with Overlap ───────────────────────────────────────
+def chunk_text(text, chunk_size=500, overlap=100):
+    """Split text into overlapping chunks so no context is lost at boundaries"""
+    chunks = []
+    sentences = text.replace('\n', ' ').split('. ')
+    current_chunk = ""
 
-client = chromadb.PersistentClient(path="./chroma_db") ## create persistent local database
+    for sentence in sentences:
+        if len(current_chunk) + len(sentence) < chunk_size:
+            current_chunk += sentence + ". "
+        else:
+            if current_chunk.strip():
+                chunks.append(current_chunk.strip())
+            # overlap: carry last N words into next chunk
+            words = current_chunk.split()
+            overlap_text = " ".join(words[-20:]) if len(words) > 20 else current_chunk
+            current_chunk = overlap_text + " " + sentence + ". "
 
-collection = client.get_or_create_collection(name = 'getrepaired') ## create or load collection
+    if current_chunk.strip():
+        chunks.append(current_chunk.strip())
 
-with open('data/getrepaired_faq.txt',"r") as f: ## open the FAQ file
-     text = f.read() ## read the entire content as string
+    return chunks
 
-chunks = [c.strip() for c in text.split("\n\n")if c.strip()]  ## # split by blank line into chunks
+# ── Step 2: Load Multiple File Types ─────────────────────────────────────────
+def load_documents(data_dir="data"):
+    """Load all .txt and .pdf files from data directory"""
+    all_text = ""
 
+    for filename in os.listdir(data_dir):
+        if filename in ["logo.jpeg", "logo.png"]:
+            continue  # skip image files
 
-### generate embeddings and store in ChromaDB
-embeddings = model.encode(chunks).tolist() ## Take every chunk of text 
-## → convert each one into 384 numbers 
-## → store all of them in a list. This is the "meaning" of each chunk in number form.
+        filepath = os.path.join(data_dir, filename)
+
+        if filename.endswith(".txt"):
+            with open(filepath, "r", encoding="utf-8") as f:
+                all_text += f.read() + "\n\n"
+            print(f"Loaded: {filename}")
+
+        elif filename.endswith(".pdf"):
+            try:
+                import pypdf
+                reader = pypdf.PdfReader(filepath)
+                for page in reader.pages:
+                    all_text += page.extract_text() + "\n\n"
+                print(f"Loaded PDF: {filename}")
+            except ImportError:
+                print(f"pypdf not installed, skipping {filename}")
+            except Exception as e:
+                print(f"Error loading {filename}: {e}")
+
+    return all_text
+
+# ── Step 3: Initialize Models and DB ─────────────────────────────────────────
+model = SentenceTransformer('all-MiniLM-L6-v2')
+client = chromadb.PersistentClient(path="./chroma_db")
+collection = client.get_or_create_collection(name="getrepaired")
+
+# ── Step 4: Load, Chunk, Embed, Store ────────────────────────────────────────
+text = load_documents()
+chunks = chunk_text(text)
+embeddings = model.encode(chunks).tolist()
+
 collection.upsert(
-    documents = chunks,   # original text
-    embeddings = embeddings,  # vector representation
-    ids=[f"chunk_{i}" for i in range(len(chunks))]  # unique id for each chunk — upsert updates if exists, adds if new
+    documents=chunks,
+    embeddings=embeddings,
+    ids=[f"chunk_{i}" for i in range(len(chunks))]
 )
-print(f"Ingested {len(chunks)} chunks into ChromaDB")  # confirm success
+
+print(f"Ingested {len(chunks)} chunks into ChromaDB")

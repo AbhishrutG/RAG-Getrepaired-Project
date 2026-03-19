@@ -3,3 +3,5 @@ chromadb
 groq
 streamlit
 python-dotenv
+rank-bm25
+pypdf

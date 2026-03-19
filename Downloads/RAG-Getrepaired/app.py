@@ -1,4 +1,5 @@
-import streamlit as st  # ui framework
+import os
+import streamlit as st
 
 st.set_page_config(
     page_title="Get Repaired AI Assistant",
@@ -9,34 +10,8 @@ st.set_page_config(
 # ── Brand CSS ──────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
-    /* Page background */
-    .stApp {
-        background-color: #f0f4f8;
-    }
+    .stApp { background-color: #f0f4f8; }
 
-    /* Header banner */
-    .header-banner {
-        background-color: #1560BD;
-        padding: 24px 32px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        margin-bottom: 24px;
-    }
-    .header-text h1 {
-        color: white;
-        font-size: 28px;
-        margin: 0;
-        font-weight: 700;
-    }
-    .header-text p {
-        color: #d0e4ff;
-        font-size: 14px;
-        margin: 4px 0 0 0;
-    }
-
-    /* Input box */
     .stTextInput > div > div > input {
         border: 2px solid #1560BD;
         border-radius: 8px;
@@ -51,7 +26,6 @@ st.markdown("""
         box-shadow: 0 0 0 2px rgba(61,184,75,0.2);
     }
 
-    /* Answer box */
     .answer-box {
         background-color: white;
         border-left: 5px solid #3DB84B;
@@ -64,7 +38,39 @@ st.markdown("""
         color: #1a1a2e;
     }
 
-    /* Footer */
+    .rewrite-box {
+        background-color: #eef4ff;
+        border-left: 4px solid #1560BD;
+        border-radius: 6px;
+        padding: 10px 16px;
+        margin-top: 12px;
+        font-size: 13px;
+        color: #1560BD;
+    }
+
+    .chat-user {
+        background-color: #1560BD;
+        color: white;
+        border-radius: 12px 12px 2px 12px;
+        padding: 12px 16px;
+        margin: 8px 0;
+        max-width: 80%;
+        margin-left: auto;
+        font-size: 14px;
+    }
+
+    .chat-bot {
+        background-color: white;
+        border: 1px solid #dde3ec;
+        border-radius: 12px 12px 12px 2px;
+        padding: 12px 16px;
+        margin: 8px 0;
+        max-width: 80%;
+        font-size: 14px;
+        color: #1a1a2e;
+        line-height: 1.6;
+    }
+
     .footer {
         text-align: center;
         color: #888;
@@ -74,16 +80,14 @@ st.markdown("""
         border-top: 1px solid #dde3ec;
     }
 
-    /* Hide streamlit default elements */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
 </style>
 """, unsafe_allow_html=True)
 
-# ── Auto Ingest on startup ──────────────────────────────────────────────────────
-@st.cache_resource  # runs only once per session
+# ── Auto Ingest on startup ─────────────────────────────────────────────────────
+@st.cache_resource
 def run_ingest():
-    import os
     from dotenv import load_dotenv
     from sentence_transformers import SentenceTransformer
     import chromadb
@@ -94,11 +98,29 @@ def run_ingest():
     collection = client.get_or_create_collection(name="getrepaired")
 
     base_dir = os.path.dirname(os.path.abspath(__file__))
+
+    def chunk_text(text, chunk_size=500, overlap=100):
+        chunks = []
+        sentences = text.replace('\n', ' ').split('. ')
+        current_chunk = ""
+        for sentence in sentences:
+            if len(current_chunk) + len(sentence) < chunk_size:
+                current_chunk += sentence + ". "
+            else:
+                if current_chunk.strip():
+                    chunks.append(current_chunk.strip())
+                words = current_chunk.split()
+                overlap_text = " ".join(words[-20:]) if len(words) > 20 else current_chunk
+                current_chunk = overlap_text + " " + sentence + ". "
+        if current_chunk.strip():
+            chunks.append(current_chunk.strip())
+        return chunks
+
     faq_path = os.path.join(base_dir, "data", "getrepaired_faq.txt")
     with open(faq_path, "r") as f:
         text = f.read()
 
-    chunks = [c.strip() for c in text.split("\n\n") if c.strip()]
+    chunks = chunk_text(text)
     embeddings = model.encode(chunks).tolist()
     collection.upsert(
         documents=chunks,
@@ -107,22 +129,25 @@ def run_ingest():
     )
     return True
 
-run_ingest()  # always runs on startup — safe because upsert handles duplicates
+run_ingest()
 
 # ── Load RAG ───────────────────────────────────────────────────────────────────
-@st.cache_resource  # load model only once
+@st.cache_resource
 def load_rag():
-    from query import query_rag  # import inside function to avoid blocking UI
+    from query import query_rag
     return query_rag
 
 query_rag = load_rag()
-if "chat_history" not in st.session_state:  # runs only on first load
-    st.session_state.chat_history = []  # empty list to store messages
+
+# ── Session State ──────────────────────────────────────────────────────────────
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = []       # for Groq LLM memory
+if "messages" not in st.session_state:
+    st.session_state.messages = []           # for chat UI display
 
 # ── Header ─────────────────────────────────────────────────────────────────────
 col1, col2 = st.columns([1, 4])
 with col1:
-    import os
     logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "logo.jpeg")
     st.image(logo_path, width=90)
 with col2:
@@ -135,23 +160,40 @@ with col2:
 
 st.markdown("---")
 
+# ── Chat History Display ───────────────────────────────────────────────────────
+for msg in st.session_state.messages:
+    if msg["role"] == "user":
+        st.markdown(f'<div class="chat-user">🙋 {msg["content"]}</div>', unsafe_allow_html=True)
+    else:
+        st.markdown(f'<div class="chat-bot">🤖 {msg["content"]}</div>', unsafe_allow_html=True)
+
 # ── Input ──────────────────────────────────────────────────────────────────────
 question = st.text_input(
     "Ask anything about Get Repaired:",
-    placeholder="e.g. How are repair shops verified?"
+    placeholder="e.g. How are repair shops verified?",
+    key="input"
 )
 
 # ── Answer ─────────────────────────────────────────────────────────────────────
 if question:
-    with st.spinner("Finding the best answer for you..."):
-       answer, sources = query_rag(question, st.session_state.chat_history)
-    
+    with st.spinner("Thinking..."):
+        answer, sources, rewritten_query = query_rag(question, st.session_state.chat_history)
+
+    # Update LLM memory
     st.session_state.chat_history.append({"role": "user", "content": question})
     st.session_state.chat_history.append({"role": "assistant", "content": answer})
-    
     if len(st.session_state.chat_history) > 10:
         st.session_state.chat_history = st.session_state.chat_history[-10:]
 
+    # Update chat UI
+    st.session_state.messages.append({"role": "user", "content": question})
+    st.session_state.messages.append({"role": "assistant", "content": answer})
+
+    # Show rewritten query
+    if rewritten_query.lower() != question.lower():
+        st.markdown(f'<div class="rewrite-box">🔍 <strong>Searched as:</strong> {rewritten_query}</div>', unsafe_allow_html=True)
+
+    # Show answer
     st.markdown(f"""
     <div class="answer-box">
         <strong style="color: #1560BD;">Answer:</strong><br><br>
@@ -159,10 +201,17 @@ if question:
     </div>
     """, unsafe_allow_html=True)
 
+    # Show sources
     with st.expander("📄 Sources used to generate this answer"):
         for i, source in enumerate(sources):
             st.markdown(f"**Source {i+1}:**")
             st.info(source[:300] + "..." if len(source) > 300 else source)
+
+    # Clear button
+    if st.button("🗑️ Clear conversation"):
+        st.session_state.chat_history = []
+        st.session_state.messages = []
+        st.rerun()
 
 # ── Suggested Questions ────────────────────────────────────────────────────────
 st.markdown("<br>", unsafe_allow_html=True)
@@ -180,6 +229,6 @@ with col2:
 # ── Footer ─────────────────────────────────────────────────────────────────────
 st.markdown("""
 <div class="footer">
-    © 2026 Get Repaired · AI Assistant · Built with RAG Pipeline
+    © 2026 Get Repaired · AI Assistant · RAG Pipeline with Memory, Hybrid Search & Re-ranking
 </div>
 """, unsafe_allow_html=True)
