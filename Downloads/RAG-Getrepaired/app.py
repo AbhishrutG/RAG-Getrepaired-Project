@@ -144,7 +144,7 @@ question = st.text_input(
 # ── Answer ─────────────────────────────────────────────────────────────────────
 if question:
     with st.spinner("Finding the best answer for you..."):
-        answer = query_rag(question, st.session_state.chat_history)
+       answer, sources = query_rag(question, st.session_state.chat_history)
     
     st.session_state.chat_history.append({"role": "user", "content": question})
     st.session_state.chat_history.append({"role": "assistant", "content": answer})
@@ -158,6 +158,11 @@ if question:
         {answer}
     </div>
     """, unsafe_allow_html=True)
+
+    with st.expander("📄 Sources used to generate this answer"):
+        for i, source in enumerate(sources):
+            st.markdown(f"**Source {i+1}:**")
+            st.info(source[:300] + "..." if len(source) > 300 else source)
 
 # ── Suggested Questions ────────────────────────────────────────────────────────
 st.markdown("<br>", unsafe_allow_html=True)

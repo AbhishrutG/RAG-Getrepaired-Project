@@ -30,9 +30,11 @@ def query_rag(question, chat_history = []):  # takes user question as input
         ]
     )
     
-    return response.choices[0].message.content  # return the generated answer
+    answer = response.choices[0].message.content  # the generated answer
+    sources = results['documents'][0]  # the 3 chunks used to generate the answer
+    return answer, sources  # return answer and sources
 
 if __name__ == "__main__":  # only runs when you execute this file directly
     question = input("Ask a question: ")  # take question from user
-    answer = query_rag(question)  # get answer
+    answer, sources = query_rag(question)  # get answer and sources
     print(f"\nAnswer: {answer}")  # print the answer
