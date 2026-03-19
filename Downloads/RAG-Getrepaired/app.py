@@ -116,6 +116,8 @@ def load_rag():
     return query_rag
 
 query_rag = load_rag()
+if "chat_history" not in st.session_state:  # runs only on first load
+    st.session_state.chat_history = []  # empty list to store messages
 
 # ── Header ─────────────────────────────────────────────────────────────────────
 col1, col2 = st.columns([1, 4])
@@ -142,7 +144,13 @@ question = st.text_input(
 # ── Answer ─────────────────────────────────────────────────────────────────────
 if question:
     with st.spinner("Finding the best answer for you..."):
-        answer = query_rag(question)
+        answer = query_rag(question, st.session_state.chat_history)
+    
+    st.session_state.chat_history.append({"role": "user", "content": question})
+    st.session_state.chat_history.append({"role": "assistant", "content": answer})
+    
+    if len(st.session_state.chat_history) > 10:
+        st.session_state.chat_history = st.session_state.chat_history[-10:]
 
     st.markdown(f"""
     <div class="answer-box">

@@ -11,7 +11,7 @@ collection = client.get_or_create_collection(name="getrepaired")  # load existin
 groq_client = Groq(api_key=os.getenv("GROQ_API_KEY"))  # connect to Groq LLM
 
 
-def query_rag(question):  # takes user question as input
+def query_rag(question, chat_history = []):  # takes user question as input
     
     question_embedding = model.encode(question).tolist()  # convert question to vector
     
@@ -24,7 +24,8 @@ def query_rag(question):  # takes user question as input
     response = groq_client.chat.completions.create(
        model="llama-3.1-8b-instant",  # LLaMA 3 model on Groq
         messages=[
-            {"role": "system", "content": "You are a helpful assistant for Get Repaired platform. Answer only based on the context provided."},  # tells LLM who it is
+            {"role": "system", "content": "You are a helpful assistant for Get Repaired platform. Answer only based on the context provided.Remember previous messages in the conversation."},  # tells LLM who it is
+            *chat_history,  # inject previous messages
             {"role": "user", "content": f"Context:\n{context}\n\nQuestion: {question}"}  # sends chunks + question
         ]
     )
